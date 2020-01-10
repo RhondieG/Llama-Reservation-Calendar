@@ -8,7 +8,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 // Sequelize Setup
-var models = require('../models');
+var models = require('./models');
 
 //Routes 
 const indexRouter = require('./routes/index');
