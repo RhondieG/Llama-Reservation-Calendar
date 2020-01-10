@@ -8,12 +8,17 @@ const Calendar = require('calendar').Calendar;
 // Index Page For Now
 router.get('/', function(req, res) {
     var cal = new Calendar(1);               // weeks starting on Monday
-    m = cal.monthDays(2012, 1);
+    m = cal.monthDays(2020, 1);
     for (i=0; i<m.length; i++) console.log(m[i]);
 
     let calenderObject = { calendarValues: m};
 
     res.render('pages/index', calenderObject);
 });
+
+function getTodaysMonth()
+{
+
+}
 
 module.exports = router;
