@@ -1,0 +1,10 @@
+body
+{
+    background-image:url('llama_thumb.jpeg');
+    background-repeat:repeat-x;
+}
+
+h1{
+    color: white;
+    font-style: italic;
+}
