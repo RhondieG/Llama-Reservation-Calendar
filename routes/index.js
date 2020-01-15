@@ -2,20 +2,75 @@
 const express = require('express');
 const router = express.Router();
 
+const db = require("../models/");
+
 //Calendar Module from NPM
 const Calendar = require('calendar').Calendar; 
 
-// Index Page For Now
+// Index Page 
 router.get('/', function(req, res) {
+
     let cal = new Calendar(1);               // weeks starting on Monday
     const daysInMonth = cal.monthDays(2020, today('getMonth'));
     for (i=0; i<daysInMonth.length; i++) console.log(daysInMonth[i]);
 
-    let juice = 'RANDOM';
     let calenderObject = { m : daysInMonth, year : today('getYear'), month : today('getMonth')};
 
     res.render('pages/index', calenderObject);
 });
+
+//if the user is logged in already, the req will have the session user id already 
+//Check if Reservation Exist for this Date 
+router.get('/api/reservation', function(req, res) {
+
+    req.session.user = 1;
+
+    db.user.findOne({
+        where: {
+            id: req.session.user
+        },
+    }).then(user => {
+        // if the user exists
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(user));
+        
+        console.log('works');
+    });
+});
+
+router.post('/api/reservation', function(req, res) {
+
+    //Default values for now
+    req.session.user = 1;
+    let llama_id = 1;
+    let date_reserved = '1/14/2020';
+
+    db.user.findOne({
+        where: {
+            id: req.session.user
+        },
+    }).then(user => {
+        // if the user exists, then insert new reservation
+        db.reservation.create({
+            user_id: req.session.user,
+            llama_id: llama_id,
+            date_reserved: date_reserved
+        }).then(new_reservation => {
+        
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify(new_reservation));
+            console.log('works');
+
+        }).catch(error => {
+
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify(error));
+            console.log('erorr');
+        });
+    });
+});
+
+
 
 function today(userDateFilter)
 {
