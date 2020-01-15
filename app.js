@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 // include routes
 const index = require('./routes/index');
 const users = require('./models/user');
+const register = require('./routes/register');
 
 const app = express();
 

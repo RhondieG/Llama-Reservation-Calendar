@@ -14,6 +14,7 @@ var models = require('./models');
 const indexRouter = require('./routes/index');
 const loginRouter = require('./routes/login');
 const authRouter = require('./routes/auth');
+const registerRouter = require('./routes/register');
 
 const setupAuth = require('./routes/auth').setupAuth;
 
@@ -35,6 +36,7 @@ setupAuth(app);
 app.use('/', indexRouter);
 app.use('/login', loginRouter);
 app.use('/auth', authRouter);
+app.use('/register', registerRouter);
 
 models.sequelize.sync().then(function () {
     app.listen(process.env.PORT || 3000, function(){
