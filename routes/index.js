@@ -42,8 +42,9 @@ router.post('/api/reservation', function(req, res) {
 
     //Default values for now
     req.session.user = 1;
+    
     let llama_id = 1;
-    let date_reserved = '1/14/2020';
+    let date_reserved = '1/10/2020';
 
     db.user.findOne({
         where: {
@@ -71,6 +72,14 @@ router.post('/api/reservation', function(req, res) {
 });
 
 
+router.get('/api/reservation/llama/all', function(req,res)
+{
+    db.llama.findAll().then((results) => {
+        res.end(JSON.stringify(results));
+        console.log('llama works');
+    });
+
+});
 
 function today(userDateFilter)
 {

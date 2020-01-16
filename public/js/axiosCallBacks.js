@@ -12,6 +12,20 @@ function apiInsertReservation(data, successCallback, errorCallback) {
       .catch(errorCallback);
 }
 
+function apiGetAllLlama(data, successCallback, errorCallback) {
+
+  axios.get(api_url + 'api/reservation/llama/all', {} )
+    .then(successCallback)
+    .catch(errorCallback);
+}
+
+function apiGetSingleLlama(data, successCallback, errorCallback) {
+
+  axios.get(api_url + 'api/reservation/llama/single', data )
+    .then(successCallback)
+    .catch(errorCallback);
+}
+
 function apiRegister(data, successCallback, errorCallback) {
 
     axios.post(api_url + 'api/register', data )
