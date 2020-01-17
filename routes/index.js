@@ -12,7 +12,7 @@ router.get('/', function(req, res) {
 
     let cal = new Calendar(1);               // weeks starting on Monday
     const daysInMonth = cal.monthDays(2020, today('getMonth'));
-    for (i=0; i<daysInMonth.length; i++) console.log(daysInMonth[i]);
+    //for (i=0; i<daysInMonth.length; i++) console.log(daysInMonth[i]);
 
     let calenderObject = { m : daysInMonth, year : today('getYear'), month : today('getMonth')};
 
@@ -71,12 +71,22 @@ router.post('/api/reservation', function(req, res) {
     });
 });
 
-
+//Pull ALL llamas
 router.get('/api/reservation/llama/all', function(req,res)
 {
     db.llama.findAll().then((results) => {
         res.end(JSON.stringify(results));
-        console.log('llama works');
+    });
+
+});
+
+//Pull llamas based off id
+router.get('/api/reservation/llama/:id', function(req,res)
+{
+    const id = Number.parseInt(req.params.id, 10);
+    
+    db.llama.findOne({ where: {id: id}}).then((results) => {
+        res.end(JSON.stringify(results));
     });
 
 });

@@ -1,3 +1,5 @@
+const api_url = 'http://localhost:3000/';
+
 function apiGetPosts(successCallback, errorCallback) {
 
     axios.get(api_url + 'api/posts', {})
@@ -20,8 +22,8 @@ function apiGetAllLlama(data, successCallback, errorCallback) {
 }
 
 function apiGetSingleLlama(data, successCallback, errorCallback) {
-
-  axios.get(api_url + 'api/reservation/llama/single', data )
+  console.log(data);
+  axios.get(api_url + 'api/reservation/llama/' + data.llama_id,)
     .then(successCallback)
     .catch(errorCallback);
 }

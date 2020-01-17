@@ -54,9 +54,12 @@
                  <h4 class="modal-title">Reservation Date - ${reservedDate}</h4>
               </div>
               <div class="modal-body">
+                <p>Choose your llama!</p>
                 <select class="custom-select" id="selectLlama" onchange="getBackgroundInfo(this)">
                 </select>
-                 <p>Some text in the modal.</p>
+                 <div id="characterBackground" class="card">
+
+                </div>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="reserveDate(this)">Reserve</button>
@@ -103,20 +106,33 @@
     //User chooses a character with onchange event, a mini card will show small data about the character.
     function getBackgroundInfo(llama) {
 
-      axios.get(`https://www.anapioficeandfire.com/api/characters?name=${formatValue}`).then(function (response) {
-        var populateBGInfo = `<img class="card-img-top" src="${characterImages[formatValue]}" alt="Card image cap" width=400 height=350>
-                  <div class="card-body">
-                    <h5 class="card-title">${response.data[0].titles[0] || "Titleless"}</h5>
-                  </div>
-                  <ul class="list-group list-group-flush">
-                    <li class="list-group-item">Born: ${response.data[0].born}</li>
-                    <li class="list-group-item">Culture: ${response.data[0].culture || 'UNKNOWN'}</li>
-                    <li class="list-group-item">${response.data[0].gender}</li>
-                  </ul>`;
+        let characterBGContainer = document.getElementById("characterBackground");
 
-        document.getElementById("characterBackground").innerHTML = populateBGInfo;
+        let successCallback = function(result)
+        {
+            let populateBGInfo = `<img class="card-img-top" src="${result.data.image_url}" alt="Card image cap" width=400 height=350>
+                    <div class="card-body">
+                        <h5 class="card-title">1</h5>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Born: 1</li>
+                        <li class="list-group-item">Culture: 1</li>
+                        <li class="list-group-item">1</li>
+                    </ul>`;
 
-      });
+                characterBGContainer.innerHTML = populateBGInfo;
+        }
+
+        let errorCallback = function(result)
+        {
+
+        }
+
+        //Send the llama id value to generate the llama background info 
+        let data = {'llama_id': llama.value}
+
+        apiGetSingleLlama(data, successCallback, errorCallback);
+
     }
 
 
