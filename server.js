@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const bcrypt = require('bcryptjs'); //password encrption, npm install crypto is another type 
+const bcrypt = require('bcrypt'); //password encrption, npm install crypto is another type 
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
