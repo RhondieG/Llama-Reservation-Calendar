@@ -110,14 +110,14 @@
 
         let successCallback = function(result)
         {
+            console.log(result);
             let populateBGInfo = `<img class="card-img-top" src="${result.data.image_url}" alt="Card image cap" width=400 height=350>
                     <div class="card-body">
-                        <h5 class="card-title">1</h5>
+                        <h5 class="card-title">I AM ${result.data.name}</h5>
                     </div>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Born: 1</li>
-                        <li class="list-group-item">Culture: 1</li>
-                        <li class="list-group-item">1</li>
+                        <li class="list-group-item">Origin: ${result.data.origin}</li>
+                        <li class="list-group-item">Feed: ${result.data.feed_id}</li>
                     </ul>`;
 
                 characterBGContainer.innerHTML = populateBGInfo;
