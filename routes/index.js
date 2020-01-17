@@ -8,7 +8,7 @@ const db = require("../models/");
 const Calendar = require('calendar').Calendar; 
 
 //Joins for Sequelize
-db.llama.hasMany(db.feed, {foreignKey: 'id'});
+// db.llama.hasMany(db.feed, {foreignKey: 'id'});
 //db.feed.belongsTo(db.llama, {foreignKey: 'feed_id'});
 
 
@@ -90,6 +90,7 @@ router.get('/api/reservation/llama/:id', function(req,res)
 {
     const id = Number.parseInt(req.params.id, 10);
 
+    //Association with feed is defined in models/llama folder under associate
     db.llama.findOne(
         { 
 
