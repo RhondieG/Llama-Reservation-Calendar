@@ -15,8 +15,12 @@ router.post('/', function(req, res, next){
         password: generateHash(req.body.password)
     });
     return newUser.save().then(results => {
-        res.redirect('/login');
+        
+        res.redirect('/');
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(results));
     })
+
 });
 
 module.exports = router;

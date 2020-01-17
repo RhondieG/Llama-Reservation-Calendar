@@ -9,6 +9,8 @@ const bodyParser = require('body-parser');
 const index = require('./routes/index');
 const users = require('./models/user');
 const register = require('./routes/register');
+const login = require('./routes/login');
+const auth = require('./routes/auth');
 
 const app = express();
 
