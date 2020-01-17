@@ -49,7 +49,6 @@ router.post('/api/reservation', function(req, res) {
     req.session.user = 1;
     
     let llama_id = 1;
-    let date_reserved = '1/10/2020';
 
     db.user.findOne({
         where: {
@@ -59,8 +58,8 @@ router.post('/api/reservation', function(req, res) {
         // if the user exists, then insert new reservation
         db.reservation.create({
             user_id: req.session.user,
-            llama_id: llama_id,
-            date_reserved: date_reserved
+            llama_id: req.body.llamaChosen,
+            date_reserved: req.body.dateReserved
         }).then(new_reservation => {
         
             res.setHeader('Content-Type', 'application/json');

@@ -36,6 +36,8 @@
     <script src="./js/axiosCallBacks.js" type="text/javascript"></script>
 
     <script type="text/JavaScript">
+
+    let llama_chosen; 
     
     function reserveModal(chosenDate)
     {
@@ -62,7 +64,7 @@
                 </div>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="reserveDate(this)">Reserve</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="reserveDate('${reservedDate}')">Reserve</button>
                 <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
              </div>
            </div>
@@ -133,6 +135,9 @@
 
         apiGetSingleLlama(data, successCallback, errorCallback);
 
+        //Set the llama value globally
+        llama_chosen =  llama.value;
+
     }
 
 
@@ -152,8 +157,11 @@
 
         };
 
+        let data = {"dateReserved": chosenDate, "llamaChosen": llama_chosen};
+
         apiInsertReservation(data, successCallback, errorCallback);
     }
+
 
         $(document).ready(function(e) {
         // Initializing our modal without having to call the button.
