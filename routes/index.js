@@ -8,8 +8,8 @@ const db = require("../models/");
 const Calendar = require('calendar').Calendar; 
 
 //Joins for Sequelize
-db.llama.hasMany(db.feed, {foreignKey: 'feed_id'});
-db.feed.belongsTo(db.llama, {foreignKey: 'id'});
+db.llama.hasMany(db.feed, {foreignKey: 'id'});
+//db.feed.belongsTo(db.llama, {foreignKey: 'feed_id'});
 
 
 // Index Page 
@@ -92,7 +92,7 @@ router.get('/api/reservation/llama/:id', function(req,res)
 
     db.llama.findOne(
         { 
-            
+
         where: {id: id},
         include: [db.feed]
 
