@@ -1,7 +1,7 @@
 const express = require('express');
 const passport = require('passport');
 const LinkedInStrategy = require('@sokratis/passport-linkedin-oauth2').Strategy;
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 const db = require('../models');
 const LocalStrategy = require('passport-local').Strategy;
 
