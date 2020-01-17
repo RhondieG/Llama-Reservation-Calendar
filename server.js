@@ -13,6 +13,10 @@ var models = require('./models');
 //Routes 
 const indexRouter = require('./routes/index');
 const loginRouter = require('./routes/login');
+const authRouter = require('./routes/auth');
+const registerRouter = require('./routes/register');
+
+const setupAuth = require('./routes/auth').setupAuth;
 
 //Add options to app
 var app = express();
@@ -27,8 +31,12 @@ app.use(cors());
 app.use(cookieParser());
 app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}));
 
+setupAuth(app);
+
 app.use('/', indexRouter);
 app.use('/login', loginRouter);
+app.use('/auth', authRouter);
+app.use('/register', registerRouter);
 
 models.sequelize.sync().then(function () {
     app.listen(process.env.PORT || 3000, function(){

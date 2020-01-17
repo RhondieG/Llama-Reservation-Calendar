@@ -15,5 +15,11 @@ router.get('/', function(req, res) {
 
     res.render('pages/index', calenderObject);
 });
+  
+router.get('/logout', function(req, res, next) {
+  console.log('logging out');
+  req.logout();
+  res.redirect('/');
+});
 
 module.exports = router;
