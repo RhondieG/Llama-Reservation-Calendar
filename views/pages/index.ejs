@@ -38,6 +38,7 @@
     <script type="text/JavaScript">
 
     let llama_chosen; 
+    let date_chosen;
     
     function reserveModal(chosenDate)
     {
@@ -45,6 +46,8 @@
 
         //Grab custom data attribute
         let reservedDate = $(chosenDate).attr("data-calendar-reservation") // will return the string "123"$('data-calendar-reservation');
+
+        date_chosen = reservedDate;
 
         //Dynamically Render Information
         document.getElementById('reservation').innerHTML =
@@ -112,7 +115,6 @@
 
         let successCallback = function(result)
         {
-            console.log(result);
             let populateBGInfo = `<img class="card-img-top" src="${result.data.image_url}" alt="Card image cap" width=400 height=350>
                     <div class="card-body">
                         <h5 class="card-title">I AM ${result.data.name}</h5>
@@ -127,7 +129,7 @@
 
         let errorCallback = function(result)
         {
-
+            alert("error!");
         }
 
         //Send the llama id value to generate the llama background info 
@@ -140,8 +142,6 @@
 
     }
 
-
-
   
     function reserveDate(chosenDate)
     {
@@ -149,13 +149,34 @@
 
         let successCallback = function(response)
         {
+            document.getElementById('reservation').innerHTML =
+            ` <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">SUCCESS! RESERVED FOR ${date_chosen}</h4>
+                </div>
+                <div class="modal-body">
+                    DATE RESERVED! THANK YOU FOR YOUR PATRONAGE!
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            </div>
+            `;
 
+            //Show the Modal Once the Information is Rendered
+            //Have to set a small timeout due to issue with modal showing up immediately 
+            setTimeout(function(){$('#reservation').modal('show')}, 900) 
         };
 
         let errorCallback = function(error)
         {
 
-        };
+        }; 
+
 
         let data = {"dateReserved": chosenDate, "llamaChosen": llama_chosen};
 
