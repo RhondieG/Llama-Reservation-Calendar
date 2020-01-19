@@ -40,6 +40,7 @@
     let llama_chosen; 
     let date_chosen;
     
+    //Modal that shows up when user clicks a date block 
     function reserveModal(chosenDate)
     {
         //alert(chosenDate.innerHTML);
@@ -68,7 +69,7 @@
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="reserveDate('${reservedDate}')">Reserve</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="resetData()" data-dismiss="modal">Close</button>
              </div>
            </div>
         </div>
@@ -84,7 +85,6 @@
     {
         let successCallback = function(response)
         {
-            console.log(response);
             response.data.forEach(dateMatch);         
         };
 
@@ -96,12 +96,12 @@
         apiGetAllReservation('', successCallback, errorCallback);
     }
 
-    //
+    //If Date Matches, Display The Reservation is taken
     function dateMatch(value)
     {
         let formattedDate = formatDate(value.date_reserved, 'fullDate');
 
-        console.log(formattedDate);
+        //console.log(formattedDate);
 
         document.querySelectorAll('.reservation').forEach(function(element, index) {
 
@@ -113,7 +113,7 @@
                 element.style.backgroundColor = "grey";
                 element.style.pointerEvents = "none";
             }
-            else if(isNaN(formatDate(elementReservation,'getDate')))
+            else if(isNaN(formatDate(elementReservation,'getDate'))) //disable element blocks with date as 0. means it does not exist in month
             {
                 element.style.pointerEvents = "none";
                 element.innerHTML = '';
@@ -121,6 +121,7 @@
         });
     }
 
+    //Format the date that goes in. Value is the date and userDateFilter is type of date data returned
     function formatDate(value,userDateFilter)
     {
         let d = new Date(value);
@@ -141,6 +142,12 @@
         {
             return d.getDate();
         }
+    }
+
+    function resetData()
+    {
+        llama_chosen = '';
+        date_chosen = '';
     }
    
     //Generate Select Element.
@@ -205,7 +212,14 @@
     //New Reservation to be created for user
     function reserveDate(chosenDate)
     {
-        //Get Date Reserved AND Llama Chosen 
+        console.log(llama_chosen);
+        if(!llama_chosen || llama_chosen == 'Choose')
+        {
+            alert('Please choose a valid llama!');
+
+            //setTimeout(function(){$('#reservation').modal('show')}, 900);
+            return;
+        }
 
         let successCallback = function(response)
         {
@@ -233,6 +247,9 @@
 
             //Re-render the calendar display to show taken dates
             displayAllReservations();
+
+            resetData();
+
         };
 
         let errorCallback = function(error)
