@@ -21,6 +21,13 @@ function apiGetAllLlama(data, successCallback, errorCallback) {
     .catch(errorCallback);
 }
 
+function apiGetAllReservation(data, successCallback, errorCallback) {
+
+  axios.get(api_url + 'api/reservation/all', {} )
+    .then(successCallback)
+    .catch(errorCallback);
+}
+
 function apiGetSingleLlama(data, successCallback, errorCallback) {
   console.log(data);
   axios.get(api_url + 'api/reservation/llama/' + data.llama_id,)

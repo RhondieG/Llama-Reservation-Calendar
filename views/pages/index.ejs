@@ -78,12 +78,71 @@
         $('#reservation').modal('show');
     }
 
-    //TODO GENERATE LLAMA SELECT DROPDOWN WITH LLAMA INFO WHEN USER CHANGES 
-    //TODO GET DATE RESERVED AND LLAMA CHOSEN 
-    //TODO ONCE USER CHOOSES RESERVE, REFRESH THE PAGE 
-    //TODO ONCE USER ENTERS INDEX, IF ANY DAYS RESERVED, USE POINTER EVENTS DISABLED TO PREVENT USER CLICKING BLOCK 
+    displayAllReservations();
 
-    
+    function displayAllReservations()
+    {
+        let successCallback = function(response)
+        {
+            console.log(response);
+            response.data.forEach(dateMatch);         
+        };
+
+        let errorCallback = function(response)
+        {
+
+        };
+
+        apiGetAllReservation('', successCallback, errorCallback);
+    }
+
+    //
+    function dateMatch(value)
+    {
+        let formattedDate = formatDate(value.date_reserved, 'fullDate');
+
+        console.log(formattedDate);
+
+        document.querySelectorAll('.reservation').forEach(function(element, index) {
+
+            let elementReservation = $(element).attr("data-calendar-reservation");
+
+            if(elementReservation == formattedDate)
+            {
+                element.innerHTML = 'Date Taken';
+                element.style.backgroundColor = "grey";
+                element.style.pointerEvents = "none";
+            }
+            else if(isNaN(formatDate(elementReservation,'getDate')))
+            {
+                element.style.pointerEvents = "none";
+                element.innerHTML = '';
+            }
+        });
+    }
+
+    function formatDate(value,userDateFilter)
+    {
+        let d = new Date(value);
+
+        if(userDateFilter == 'fullDate')
+        {
+            return d.getMonth()+1 + '/' + d.getDate() + '/' + d.getFullYear();
+        }
+        else if (userDateFilter == 'getMonth')
+        {
+            return d.getMonth()+1;
+        }
+        else if(userDateFilter == 'getYear')
+        {
+            return d.getFullYear();
+        }
+        else if(userDateFilter == 'getDate')
+        {
+            return d.getDate();
+        }
+    }
+   
     //Generate Select Element.
     document.body.addEventListener("click", function (event) {
         if (event.target.classList.contains("reservation")) 
@@ -143,6 +202,7 @@
     }
 
   
+    //New Reservation to be created for user
     function reserveDate(chosenDate)
     {
         //Get Date Reserved AND Llama Chosen 
@@ -169,7 +229,10 @@
 
             //Show the Modal Once the Information is Rendered
             //Have to set a small timeout due to issue with modal showing up immediately 
-            setTimeout(function(){$('#reservation').modal('show')}, 900) 
+            setTimeout(function(){$('#reservation').modal('show')}, 900);
+
+            //Re-render the calendar display to show taken dates
+            displayAllReservations();
         };
 
         let errorCallback = function(error)

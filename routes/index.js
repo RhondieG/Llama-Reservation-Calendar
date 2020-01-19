@@ -43,6 +43,27 @@ router.get('/api/reservation', function(req, res) {
     });
 });
 
+//Pull All reservations to display on the calendar
+router.get('/api/reservation/all', function(req, res) {
+
+    db.reservation.findAll().then((results) => {
+        res.end(JSON.stringify(results));
+    });
+
+/*     db.reservation.findAll(
+        {
+            where:
+            {
+                date_reserved: {
+                    $gte: new Date('10/20/2019')
+                  }
+            }
+        }
+    ).then((results) => {
+        res.end(JSON.stringify(results));
+    }); */
+});
+
 router.post('/api/reservation', function(req, res) {
 
     //Default values for now
