@@ -8,7 +8,7 @@ const db = require("../models/");
 const Calendar = require('calendar').Calendar; 
 
 //Joins for Sequelize
-db.llama.hasMany(db.feed, {foreignKey: 'id'});
+// db.llama.hasMany(db.feed, {foreignKey: 'id'});
 //db.feed.belongsTo(db.llama, {foreignKey: 'feed_id'});
 
 
@@ -49,13 +49,33 @@ router.get('/api/reservation', function(req, res) {
     });
 });
 
+//Pull All reservations to display on the calendar
+router.get('/api/reservation/all', function(req, res) {
+
+    db.reservation.findAll().then((results) => {
+        res.end(JSON.stringify(results));
+    });
+
+/*     db.reservation.findAll(
+        {
+            where:
+            {
+                date_reserved: {
+                    $gte: new Date('10/20/2019')
+                  }
+            }
+        }
+    ).then((results) => {
+        res.end(JSON.stringify(results));
+    }); */
+});
+
 router.post('/api/reservation', function(req, res) {
 
     //Default values for now
     req.session.user = 1;
     
     let llama_id = 1;
-    let date_reserved = '1/10/2020';
 
     db.user.findOne({
         where: {
@@ -65,8 +85,8 @@ router.post('/api/reservation', function(req, res) {
         // if the user exists, then insert new reservation
         db.reservation.create({
             user_id: req.session.user,
-            llama_id: llama_id,
-            date_reserved: date_reserved
+            llama_id: req.body.llamaChosen,
+            date_reserved: req.body.dateReserved
         }).then(new_reservation => {
         
             res.setHeader('Content-Type', 'application/json');
@@ -96,6 +116,7 @@ router.get('/api/reservation/llama/:id', function(req,res)
 {
     const id = Number.parseInt(req.params.id, 10);
 
+    //Association with feed is defined in models/llama folder under associate
     db.llama.findOne(
         { 
 

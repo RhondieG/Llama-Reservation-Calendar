@@ -36,13 +36,19 @@
     <script src="./js/axiosCallBacks.js" type="text/javascript"></script>
 
     <script type="text/JavaScript">
+
+    let llama_chosen; 
+    let date_chosen;
     
+    //Modal that shows up when user clicks a date block 
     function reserveModal(chosenDate)
     {
         //alert(chosenDate.innerHTML);
 
         //Grab custom data attribute
         let reservedDate = $(chosenDate).attr("data-calendar-reservation") // will return the string "123"$('data-calendar-reservation');
+
+        date_chosen = reservedDate;
 
         //Dynamically Render Information
         document.getElementById('reservation').innerHTML =
@@ -62,8 +68,8 @@
                 </div>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="reserveDate(this)">Reserve</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="reserveDate('${reservedDate}')">Reserve</button>
+                <button type="button" class="btn btn-primary" onclick="resetData()" data-dismiss="modal">Close</button>
              </div>
            </div>
         </div>
@@ -73,12 +79,77 @@
         $('#reservation').modal('show');
     }
 
-    //TODO GENERATE LLAMA SELECT DROPDOWN WITH LLAMA INFO WHEN USER CHANGES 
-    //TODO GET DATE RESERVED AND LLAMA CHOSEN 
-    //TODO ONCE USER CHOOSES RESERVE, REFRESH THE PAGE 
-    //TODO ONCE USER ENTERS INDEX, IF ANY DAYS RESERVED, USE POINTER EVENTS DISABLED TO PREVENT USER CLICKING BLOCK 
+    displayAllReservations();
 
-    
+    function displayAllReservations()
+    {
+        let successCallback = function(response)
+        {
+            response.data.forEach(dateMatch);         
+        };
+
+        let errorCallback = function(response)
+        {
+
+        };
+
+        apiGetAllReservation('', successCallback, errorCallback);
+    }
+
+    //If Date Matches, Display The Reservation is taken
+    function dateMatch(value)
+    {
+        let formattedDate = formatDate(value.date_reserved, 'fullDate');
+
+        //console.log(formattedDate);
+
+        document.querySelectorAll('.reservation').forEach(function(element, index) {
+
+            let elementReservation = $(element).attr("data-calendar-reservation");
+
+            if(elementReservation == formattedDate)
+            {
+                element.innerHTML = 'Date Taken';
+                element.style.backgroundColor = "grey";
+                element.style.pointerEvents = "none";
+            }
+            else if(isNaN(formatDate(elementReservation,'getDate'))) //disable element blocks with date as 0. means it does not exist in month
+            {
+                element.style.pointerEvents = "none";
+                element.innerHTML = '';
+            }
+        });
+    }
+
+    //Format the date that goes in. Value is the date and userDateFilter is type of date data returned
+    function formatDate(value,userDateFilter)
+    {
+        let d = new Date(value);
+
+        if(userDateFilter == 'fullDate')
+        {
+            return d.getMonth()+1 + '/' + d.getDate() + '/' + d.getFullYear();
+        }
+        else if (userDateFilter == 'getMonth')
+        {
+            return d.getMonth()+1;
+        }
+        else if(userDateFilter == 'getYear')
+        {
+            return d.getFullYear();
+        }
+        else if(userDateFilter == 'getDate')
+        {
+            return d.getDate();
+        }
+    }
+
+    function resetData()
+    {
+        llama_chosen = '';
+        date_chosen = '';
+    }
+   
     //Generate Select Element.
     document.body.addEventListener("click", function (event) {
         if (event.target.classList.contains("reservation")) 
@@ -110,14 +181,13 @@
 
         let successCallback = function(result)
         {
-            console.log(result);
             let populateBGInfo = `<img class="card-img-top" src="${result.data.image_url}" alt="Card image cap" width=400 height=350>
                     <div class="card-body">
                         <h5 class="card-title">I AM ${result.data.name}</h5>
                     </div>
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item">Origin: ${result.data.origin}</li>
-                        <li class="list-group-item">Feed: ${result.data.feed_id}</li>
+                        <li class="list-group-item">Feed: ${result.data.feed.feed}</li>
                     </ul>`;
 
                 characterBGContainer.innerHTML = populateBGInfo;
@@ -125,7 +195,7 @@
 
         let errorCallback = function(result)
         {
-
+            alert("error!");
         }
 
         //Send the llama id value to generate the llama background info 
@@ -133,27 +203,66 @@
 
         apiGetSingleLlama(data, successCallback, errorCallback);
 
+        //Set the llama value globally
+        llama_chosen =  llama.value;
+
     }
 
-
-
   
+    //New Reservation to be created for user
     function reserveDate(chosenDate)
     {
-        //Get Date Reserved AND Llama Chosen 
+        console.log(llama_chosen);
+        if(!llama_chosen || llama_chosen == 'Choose')
+        {
+            alert('Please choose a valid llama!');
+
+            //setTimeout(function(){$('#reservation').modal('show')}, 900);
+            return;
+        }
 
         let successCallback = function(response)
         {
+            document.getElementById('reservation').innerHTML =
+            ` <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">SUCCESS! RESERVED FOR ${date_chosen}</h4>
+                </div>
+                <div class="modal-body">
+                    DATE RESERVED! THANK YOU FOR YOUR PATRONAGE!
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            </div>
+            `;
+
+            //Show the Modal Once the Information is Rendered
+            //Have to set a small timeout due to issue with modal showing up immediately 
+            setTimeout(function(){$('#reservation').modal('show')}, 900);
+
+            //Re-render the calendar display to show taken dates
+            displayAllReservations();
+
+            resetData();
 
         };
 
         let errorCallback = function(error)
         {
 
-        };
+        }; 
+
+
+        let data = {"dateReserved": chosenDate, "llamaChosen": llama_chosen};
 
         apiInsertReservation(data, successCallback, errorCallback);
     }
+
 
         $(document).ready(function(e) {
         // Initializing our modal without having to call the button.

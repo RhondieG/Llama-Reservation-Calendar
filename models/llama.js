@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
     image_url: DataTypes.TEXT
   }, {});
   llama.associate = function(models) {
-    // associations can be defined here
+    llama.belongsTo(models.feed, { foreignKey: 'feed_id', })
   };
   return llama;
 };
