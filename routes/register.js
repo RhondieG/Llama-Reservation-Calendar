@@ -16,7 +16,7 @@ router.post('/', function(req, res, next){
     });
     return newUser.save().then(results => {
         
-        res.redirect('/');
+        res.redirect('/login');
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify(results));
     })
