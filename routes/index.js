@@ -97,7 +97,7 @@ router.post('/api/reservation', function(req, res) {
 
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify(error));
-            console.log('erorr');
+            console.log('error');
         });
     });
 });

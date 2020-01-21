@@ -1,111 +1,49 @@
-const express = require('express');
-const router = express.Router();
-const db = require("../models/");
-//Calendar Module from NPM
-const Calendar = require('calendar').Calendar; 
-//Joins for Sequelize
-// db.llama.hasMany(db.feed, {foreignKey: 'id'});
-//db.feed.belongsTo(db.llama, {foreignKey: 'feed_id'});
-// Index Page 
-router.get('/', function(req, res) {
-    let cal = new Calendar(1);               // weeks starting on Monday
-    const daysInMonth = cal.monthDays(2020, today('getMonth'));
-    //for (i=0; i<daysInMonth.length; i++) console.log(daysInMonth[i]);
-    let calenderObject = { m : daysInMonth, year : today('getYear'), month : today('getMonth')};
-    res.render('pages/index', calenderObject);
-});
-//if the user is logged in already, the req will have the session user id already 
-//Check if Reservation Exist for this Date 
-router.get('/api/reservation', function(req, res) {
-    req.session.user = 1;
-    db.user.findOne({
-        where: {
-            id: req.session.user
-        },
-    }).then(user => {
-        // if the user exists
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify(user));
-        console.log('works');
-    });
-});
-//Pull All reservations to display on the calendar
-router.get('/api/reservation/all', function(req, res) {
-    db.reservation.findAll().then((results) => {
-        res.end(JSON.stringify(results));
-    });
-/*     db.reservation.findAll(
-        {
-            where:
-            {
-                date_reserved: {
-                    $gte: new Date('10/20/2019')
-                  }
-            }
-        }
-    ).then((results) => {
-        res.end(JSON.stringify(results));
-    }); */
-});
-router.post('/api/reservation', function(req, res) {
-    //Default values for now
-    req.session.user = 1;
-    let llama_id = 1;
-    db.user.findOne({
-        where: {
-            id: req.session.user
-        },
-    }).then(user => {
-        // if the user exists, then insert new reservation
-        db.reservation.create({
-            user_id: req.session.user,
-            llama_id: req.body.llamaChosen,
-            date_reserved: req.body.dateReserved
-        }).then(new_reservation => {
-            res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify(new_reservation));
-            console.log('works');
-        }).catch(error => {
-            res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify(error));
-            console.log('erorr');
-        });
-    });
-});
-//Pull ALL llamas
-router.get('/api/reservation/llama/all', function(req,res)
-{
-    db.llama.findAll().then((results) => {
-        res.end(JSON.stringify(results));
-    });
-});
-//Pull llamas based off id
-router.get('/api/reservation/llama/:id', function(req,res)
-{
-    const id = Number.parseInt(req.params.id, 10);
-    //Association with feed is defined in models/llama folder under associate
-    db.llama.findOne(
-        { 
-        where: {id: id},
-        include: [db.feed]
-        }).then((results) => {
-        res.end(JSON.stringify(results));
-    });
-});
-function today(userDateFilter)
-{
-    let d = new Date();
-    if(userDateFilter == 'fullDate')
-    {
-        return d.getMonth()+1 + '/' + d.getDate() + '/' + d.getFullYear();
+'use strict';
+
+const fs = require('fs');
+const path = require('path');
+const Sequelize = require('sequelize');
+const basename = path.basename(__filename);
+const db = {};
+const config = {
+    host: process.env.DB_HOST || 'localhost',
+    port: process.env.DB_PORT || 5432,
+    database: process.env.DB_DATABASE || 'llama_reservation',
+    username: process.env.DB_USERNAME || 'postgres',
+    password: process.env.DB_PASSWORD || ''
+};
+
+
+//Connection for Heroku
+const connectionString = `postgres://${config.username}:${config.password}@${config.host}:${config.port}/${config.database}`
+const sequelize = new Sequelize(process.env.DATABASE_URL || connectionString, {
+    dialect: 'postgres',
+    pool: {
+        max: 10,
+        min: 0,
+        acquire: 30000,
+        idle: 10000
     }
-    else if (userDateFilter == 'getMonth')
-    {
-        return d.getMonth()+1;
-    }
-    else if(userDateFilter == 'getYear')
-    {
-        return d.getFullYear();
-    }
-}
-module.exports = router;
+});
+
+
+fs
+  .readdirSync(__dirname)
+  .filter(file => {
+    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
+  })
+  .forEach(file => {
+    const model = sequelize['import'](path.join(__dirname, file));
+    db[model.name] = model;
+  });
+
+Object.keys(db).forEach(modelName => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+});
+
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
+
+module.exports = db;
