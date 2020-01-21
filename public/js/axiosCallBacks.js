@@ -1,4 +1,5 @@
-const api_url = 'http://localhost:3000/';
+const api_url = 'https://llama-reservation-calendar.herokuapp.com/';
+
 function apiGetPosts(successCallback, errorCallback) {
     axios.get(api_url + 'api/posts', {})
       .then(successCallback)
